@@ -1,22 +1,26 @@
 <?php
 
-namespace Andig\ReplyMail;
+namespace blacksenator\ReplyMail;
 
-/* class fritzvCard delivers a simple function based on VCard
+/**
+ * class fritzvCard delivers a simple function based on VCard
  * to provide a vcf file whose data is based on the FRITZ!Box
  * phonebook entries
  *
  * class replymail delivers a simple function based on PHPMailer
  *
- * Copyright (c) 2019 Volker Püschel
+ * Copyright (c) 2021 Volker Püschel
  * @license MIT
  */
 
+use blacksenator\ConvertTrait;
 use PHPMailer\PHPMailer\PHPMailer;
 use Sabre\VObject;
 
 class replymail
 {
+    use ConvertTrait;
+
     private $vCard;
     private $mail;
 
@@ -40,27 +44,21 @@ class replymail
     {
         $this->vCard = new VObject\Component\VCard;
         $this->vCard->VERSION = '3.0';          // the default VERSION:4.0 causes problems with umlauts at Apple
-        $parts = explode(', ', $name);
-        if (count($parts) == 2) {
-            $this->vCard->add('FN', $parts[1] . ' ' . $parts[0]);
-            $this->vCard->add('N', [$parts[0], $parts[1]]);
+        $parts = $this->getNameParts($name);
+        if (isset($parts['lastname'])) {
+            $this->vCard->add('FN', $parts['firstname'] . ' ' . $parts['lastname']);
+            $this->vCard->add('N', $parts);
         } else {
-            $this->vCard->add('FN', $name);
-            $this->vCard->add('ORG', $name);
+            $this->vCard->add('FN', $parts['company']);
+            $this->vCard->add('ORG', $parts['company']);
         }
         foreach ($numbers as $number => $type) {
-            switch ($type) {
-                case 'fax_work':
-                    $this->vCard->add('TEL', $number, ['type' => 'FAX']);
-                    break;
-
-                case 'mobile':
-                    $this->vCard->add('TEL', $number, ['type' => 'CELL']);
-                    break;
-
-                default:    // home & work
-                    $this->vCard->add('TEL', $number, ['type' => strtoupper($type)]);
-                    break;
+            if ($type == 'fax_work') {
+                $this->vCard->add('TEL', $number, ['type' => 'FAX']);
+            } elseif ($type == 'mobile') {
+                $this->vCard->add('TEL', $number, ['type' => 'CELL']);
+            } else {        // home & work
+                $this->vCard->add('TEL', $number, ['type' => strtoupper($type)]);
             }
         }
         foreach ($emails as $email) {

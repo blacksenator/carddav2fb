@@ -3,10 +3,10 @@
 $config = [
     // phonebook
     'phonebook' => [
-        'id'        => 0,                                              // only "0" can store quickdial and vanity numbers
+        'id'        => 0,                   // only "0" can store quickdial and vanity numbers
         'name'      => 'Telefonbuch',
         'imagepath' => 'file:///var/InternerSpeicher/[YOURUSBSTICK]/FRITZ/fonpix/', // mandatory if you use the -i option
-        'forcedupload' => true,             // true  = CardDAV contacts overwrite phonebook on Fritz!Box
+        'forcedupload' => true,             // true  = overwrite FRITZ!Box phonebook
     ],                                      // false = newer entries will send as VCF via eMail (-> reply)
 
     // server (is considered with the run and download command)
@@ -15,7 +15,7 @@ $config = [
             'url' => 'https://...',
             'user' => '',
             'password' => '',
-            'http' => [           // http client options are directly passed to Guzzle http client
+            'http' => [                     // http client options are directly passed to Guzzle http client
                 // 'verify' => false, // uncomment to disable certificate check
                 // 'auth' => 'digest', // uncomment for digest auth
             ],
@@ -26,6 +26,7 @@ $config = [
             'url' => 'https://...',
             'user' => '',
             'password' => '',
+            ...
         ],
 */
     ],
@@ -116,7 +117,7 @@ $config = [
             'HOME' => 'home'
         ],
         /**
-         * 'phoneReplaceCharacters' conversions are processed consecutively. Order decides!
+         * 'phoneReplaceCharacters' conversions are processed length descending!
          */
         'phoneReplaceCharacters' => [          // are processed consecutively. Order decides!
             '('     => '',                     // delete separators
@@ -143,7 +144,12 @@ $config = [
             '+498'  => '08',
             '+499'  => '09',
             '+49'   => '',
-            '+'     => '00'                    // normalize foreign numbers
+            '+'     => '00'                     // normalize foreign numbers
         ]
+    ],
+
+    'jfritz' => [                               // if path is set, a converted phone book is saved there
+        'path' => '',                           // e.g. 'C:\Users\Admin\AppData\Roaming\JFritz\'
+        'phonebook' => 'jfritz.phonebook.xml',
     ]
 ];

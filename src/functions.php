@@ -2,6 +2,11 @@
 
 namespace Andig;
 
+require_once('ConvertTrait.php');
+require_once('ReplyMail/replymail.php');
+require_once('FritzAdr/fritzadr.php');
+require_once('JFritz/jfritz.php');
+
 use Andig\CardDav\Backend;
 use Andig\CardDav\VcardFile;
 use Andig\FritzBox\Converter;
@@ -10,8 +15,9 @@ use Andig\FritzBox\BackgroundImage;
 use Andig\FritzBox\Restorer;
 use Sabre\VObject\Document;
 use \SimpleXMLElement;
-use Andig\FritzAdr\fritzadr;
-use Andig\ReplyMail\replymail;
+use blacksenator\FritzAdr\fritzadr;
+use blacksenator\ReplyMail\replymail;
+use blacksenator\JFritz\jFritz;
 
 // see: https://avm.de/service/fritzbox/fritzbox-7490/wissensdatenbank/publication/show/300_Hintergrund-und-Anruferbilder-in-FRITZ-Fon-einrichten/
 define("MAX_IMAGE_COUNT", 150);
@@ -849,4 +855,19 @@ function uploadFritzAdr(SimpleXMLElement $xmlPhonebook, $config)
     fclose($memstream);
     @ftp_close($ftp_conn);
     return count($faxContacts);
+}
+
+/**
+ * if $config['jfritz']['path'] is set, than all contacts
+ * are copied into a jfritz XML phonebook
+ *
+ * @param SimpleXMLElement $xmlPhonebook phonebook in FRITZ!Box format
+ * @param array $config
+ * @return SimpleXMLElement jfritz phonebook
+ */
+function uploadjFritz(SimpleXMLElement $xmlPhonebook, $config)
+{
+    $jFritz = new jfritz;
+    $phoneBook = $jFritz->getjFritzPhonebook($xmlPhonebook);
+    $phoneBook->asXML($config['path'] . $config['phonebook']);
 }
