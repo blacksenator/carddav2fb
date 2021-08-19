@@ -120,6 +120,12 @@ class RunCommand extends Command
             }
         }
 
+        // uploading jFritz phonebook
+        if (isset($this->config['jfritz']['path'])) {
+            error_log('Selecting and uploading contact(s) for jFritz');
+            uploadjFritz($xmlPhonebook, $this->config['jfritz']);
+        }
+
         return 0;
     }
 
