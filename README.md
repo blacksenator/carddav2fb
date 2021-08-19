@@ -1,8 +1,12 @@
 # CardDAV contacts import for AVM FRITZ!Box
 
-[![Build Status](https://travis-ci.org/andig/carddav2fb.svg?branch=master)](https://travis-ci.org/andig/carddav2fb) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BB3W3WH7GVSNW)
+Purpose of the software is the (automatic) uploading of contact data from CardDAV servers as a phone book into an AVM FRITZ!Box.
 
+<<<<<<< HEAD
 This is a completely revised version of [https://github.com/jens-maus/carddav2fb][descent].
+=======
+This is an extendeded version of <https://github.com/andig/carddav2fb>
+>>>>>>> f668780 (refactoring of the telephone book output for other purposes)
 
 ## Features
 
@@ -10,20 +14,19 @@ This is a completely revised version of [https://github.com/jens-maus/carddav2fb
 * read from any local *.vcf files (optional)
 * selection (include/exclude) by categories or groups (e.g. iCloud)
 * upload of contact pictures to display them on the FRITZ!Fon (handling see below)
-* automatically preserves quickDial and vanity attributes of phone numbers
-  set in FRITZ!Box Web GUI. Works without config. (Hint: If you used the
-  old way of configuring your CardDav server with X-FB-QUICKDIAL /X-FB-VANITY, then your old config is respected and this new automatic feature is skipped).
 * automatically preserves internal numbers (e.g. if you use [Gruppenruf](https://avm.de/service/fritzbox/fritzbox-7490/wissensdatenbank/publication/show/1148_Interne-Rufgruppe-in-FRITZ-Box-einrichten-Gruppenruf/))
-* if more than nine phone numbers are included, the contact will be divided into a corresponding number of phonebook entries (any existing email addresses are assigned to the first set [there is no quantity limit!])
+* if more than nine phone numbers are included, the contact will be divided into a corresponding number of phone book entries (any existing email addresses are assigned to the first set [there is no quantity limit!])
 * phone numbers are sorted by type. The order of the conversion values ('phoneTypes') determines the order in the phone book entry
-* the contact's UID of the CardDAV server is added to the phonebook entry (not visible in the FRITZ! Box GUI)
-* automatically preserves QuickDial and Vanity attributes of phone numbers set in FRITZ!Box Web GUI. Works without config. These data are saved separately in the internal FRITZ!Box memory under `../FRITZ/mediabox/Atrributes.csv` from loss. The legacy way of configuring your CardDav server with X-FB-QUICKDIAL/X-FB-VANITY is no longer supported.
+* the contact's UID of the CardDAV server is added to the phone book entry (not visible in the FRITZ! Box GUI)
+* automatically preserves QuickDial and Vanity attributes of phone numbers set in FRITZ!Box Web GUI. Works without config. These data are saved separately in the internal FRITZ!Box memory under `../FRITZ/mediabox/Atrributes.csv` from loss.
 * generates an image with keypad and designated quickdial numbers (2-9), which can be uploaded to designated handhelds (see details below)
 
 Additonal with this version (fork):
 
 * specify with `forcedupload` whether the phone book should be overwritten, or if phone numbers that are not included in the upload are to be saved as vcf by e-mail (see wiki for handling details).
-* specify with `fritzadr` if fax numbers should be extracted from the phonebook and stored as FRITZ!Fax (fax4box) adressbook (FritzAdr.dbf)
+* converting vanity names to quickdial alias, so the keypad image could become more specific (e.g. '**8OMA' becomes 'Oma' instead of 'Hilde')
+* specify with `fritzadr` if fax numbers should be extracted from the phone book and stored as FRITZ!Fax (fax4box) adressbook (FritzAdr.dbf)
+* specify with `path` in `jfritz` if the phone book should be stored in jFritz format (XML) there
 
   **Have a look in the [wiki](https://github.com/BlackSenator/carddav2fb/wiki) for further information!**
 
@@ -42,7 +45,7 @@ cd carddav2fb
 composer install --no-dev
 ```
 
-Install composer (see https://getcomposer.org/download/ for newer instructions):
+Install composer (see <https://getcomposer.org/download/> for newer instructions):
 
 ```console
 composer install --no-dev --no-suggest
@@ -72,7 +75,7 @@ Edit `config.example.php` and save as `config.php` or use an other name of your 
 
 ### Upload contact pictures
 
-Uploading can also be included in uploading phonebook:
+Uploading can also be included in uploading phone book:
 
 ```console
 ./carddav2fb run -i
@@ -126,9 +129,7 @@ For debugging please set your config.php to
 
 ## Docker image
 
-The Docker image contains the tool and all its dependencies. A volume
-`/data` contains the configuration files. If the configuration is
-missing, the Docker entrypoint will abort with an error message and copy
+The Docker image contains the tool and all its dependencies. A volume `/data` contains the configuration files. If the configuration is missing, the Docker entrypoint will abort with an error message and copy
 an example file to the volume.
 
 There are two ways to use the image:
@@ -137,12 +138,9 @@ There are two ways to use the image:
 docker run --rm -v ./carddav2fb-config:/data andig/carddav2fb command...
 ```
 
-will execute a single command (and remove the created container
-afterwards).
+will execute a single command (and remove the created container afterwards).
 
-Without a command, the container entrypoint will enter an endless loop,
-repeatedly executing `carddav2fb run` in given intervals. This allows
-automatic, regular updates of your FRITZ!Box's phonebook.
+Without a command, the container entrypoint will enter an endless loop, repeatedly executing `carddav2fb run` in given intervals. This allows automatic, regular updates of your FRITZ!Box's phone book.
 
 ## License
 
