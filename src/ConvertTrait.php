@@ -29,8 +29,8 @@ trait ConvertTrait
         $name = htmlspecialchars($realName);
         $nameParts = explode(',', $name, 2);
         if (count($nameParts) == 2) {
-            $result['lastname'] = $nameParts[1];
-            $result['firstname'] = $nameParts[0];
+            $result['lastname'] = $nameParts[0];
+            $result['firstname'] = $nameParts[1];
         } else {
             $result['company'] = $name;
         }
