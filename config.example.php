@@ -149,7 +149,12 @@ $config = [
     ],
 
     'jfritz' => [                               // if path is set, a converted phone book is saved there
-        'path' => '',                           // e.g. 'C:\Users\Admin\AppData\Roaming\JFritz\'
+        'path' => '',                           // e.g. 'C:\Users\abc\AppData\Roaming\JFritz\'
         'phonebook' => 'jfritz.phonebook.xml',
-    ]
+    ],
+
+    'yealink' => [                              // if path is set, a converted phone book is saved there
+        'path' => '',                           // e.g. 'C:\Users\abc\AppData\Roaming\Yealink\'
+        'phonebook' => 'LocalPhonebook.xml',
+    ],
 ];
