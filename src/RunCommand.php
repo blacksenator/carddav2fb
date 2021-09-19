@@ -112,7 +112,7 @@ class RunCommand extends Command
         }
 
         // uploading fax adressbook
-        if (isset($this->config['fritzbox']['fritzadr']) && !$ftpDisabled) {
+        if (!empty($this->config['fritzbox']['fritzadr']) && !$ftpDisabled) {
             error_log('Selecting and uploading fax number(s) for FRITZ!fax');
             $i = uploadFritzAdr($xmlPhonebook, $this->config['fritzbox']);
             if ($i) {
@@ -121,9 +121,15 @@ class RunCommand extends Command
         }
 
         // uploading jFritz phonebook
-        if (isset($this->config['jfritz']['path'])) {
+        if (!empty($this->config['jfritz']['path'])) {
             error_log('Selecting and uploading contact(s) for jFritz');
             uploadjFritz($xmlPhonebook, $this->config['jfritz']);
+        }
+
+        // uploading jFritz phonebook
+        if (!empty($this->config['yealink']['path'])) {
+            error_log('Selecting and uploading contact(s) for Yealink');
+            uploadYealink($xmlPhonebook, $this->config['yealink']);
         }
 
         return 0;

@@ -195,7 +195,7 @@ EOD;
 
             $body = $this->getBody($fritz->getSID(), $phone, $backgroundImage);
             $result = $fritz->postImage($body);
-            // comment out the two lines above, if you activate the following block
+            // comment out the two lines above, if you activate the following block for multipart usage
             /*
             $formFields = [
                 'PhonebookId'      => '255',

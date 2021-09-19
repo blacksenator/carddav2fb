@@ -4,8 +4,36 @@ namespace blacksenator\jFritz;
 
 /**
  * This class provides functionalities to convert
- * FRITZ!Box phonebook to jFritz format
+ * FRITZ!Box phonebook into the jFritz format:
  *
+ *   <?xml version="1.0" encoding="utf-8"?>
+ *   <phonebook>
+ *       <comment>Phonebook for JFritz v0.7.6</comment>
+ *       <entry private="false">
+ *           <name>
+ *               <firstname/>
+ *               <lastname/>
+ *           </name>
+ *           <company>AMCE Inc.</company>
+ *           <phonenumbers>
+ *               <number type="business">number</number>
+ *               <number type="fax">number</number>
+ *           </phonenumbers>
+ *       </entry>
+ *       <entry private="false">
+ *           <name>
+ *               <firstname>name</firstname>
+ *               <lastname>name</lastname>
+ *           </name>
+ *           <company/>
+ *           <phonenumbers>
+ *               <number type="home">number</number>
+ *               <number type="mobile">number</number>
+ *           </phonenumbers>
+ *       </entry>
+ *   <phonebook/>
+ *
+ * @see https://jfritz.org
  * Copyright (c) 2021 Volker Püschel
  * @license MIT
  */
@@ -26,7 +54,11 @@ class jfritz
         ];
 
     /**
+     * converts phone types from FRITZ!Box
+     * to jFritz types
      *
+     * @param string $phoneType
+     * @return string
      */
     private function getPhoneType($phoneType)
     {
@@ -36,8 +68,8 @@ class jfritz
     /**
      * delivers a jFritz phonebook
      *
-     * @param SimpleXMLElement $xmlPhonebook phonebook in FRITZ!Box format
-     * @return SimpleXMLElement $phonebook phonebook in jFritz format
+     * @param SimpleXMLElement $xmlPhonebook FRITZ!Box phonebook
+     * @return SimpleXMLElement $phonebook jFritz phonebook
      */
     public function getjFritzPhonebook(SimpleXMLElement $xmlPhonebook)
     {
