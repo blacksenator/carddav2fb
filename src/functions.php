@@ -6,6 +6,7 @@ require_once('ConvertTrait.php');
 require_once('ReplyMail/replymail.php');
 require_once('FritzAdr/fritzadr.php');
 require_once('JFritz/jfritz.php');
+require_once('Yealink/yealink.php');
 
 use Andig\CardDav\Backend;
 use Andig\CardDav\VcardFile;
@@ -18,6 +19,7 @@ use \SimpleXMLElement;
 use blacksenator\FritzAdr\fritzadr;
 use blacksenator\ReplyMail\replymail;
 use blacksenator\JFritz\jFritz;
+use blacksenator\yealink\yealink;
 
 // see: https://avm.de/service/fritzbox/fritzbox-7490/wissensdatenbank/publication/show/300_Hintergrund-und-Anruferbilder-in-FRITZ-Fon-einrichten/
 define("MAX_IMAGE_COUNT", 150);
@@ -869,5 +871,20 @@ function uploadjFritz(SimpleXMLElement $xmlPhonebook, $config)
 {
     $jFritz = new jfritz;
     $phoneBook = $jFritz->getjFritzPhonebook($xmlPhonebook);
+    $phoneBook->asXML($config['path'] . $config['phonebook']);
+}
+
+/**
+ * if $config['yealink']['path'] is set, than all contacts
+ * are copied into a yealink XML phonebook
+ *
+ * @param SimpleXMLElement $xmlPhonebook phonebook in FRITZ!Box format
+ * @param array $config
+ * @return SimpleXMLElement yealink phonebook
+ */
+function uploadYealink(SimpleXMLElement $xmlPhonebook, $config)
+{
+    $yealink = new yealink;
+    $phoneBook = $yealink->getYealinkPhonebook($xmlPhonebook);
     $phoneBook->asXML($config['path'] . $config['phonebook']);
 }
