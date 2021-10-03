@@ -26,9 +26,12 @@ Additonal with this version (fork):
 * specify `forcedupload` whether the phone book should be overwritten, or if phone numbers that are not included in the upload are to be saved as vcf by e-mail (see wiki for handling details).
 * converting vanity names to quickdial alias, so the keypad image could become more specific (e.g. '**8OMA' becomes 'Oma' instead of 'Hilde')
 * additional outputs:
-  * specify `fritzadr` if fax numbers should be extracted from the phone book and stored as FRITZ!Fax (fax4box) adressbook (FritzAdr.dbf)
-  * specify `path` in `jfritz` if the phone book is to be stored there in jFritz format (XML)
-  * specify `path` in `yealink` if the phone book is to be stored there in Yealink IP phone format (XML)
+  * **FRITZ!adr:** specify `fritzadr` if fax numbers should be extracted from the phone book and stored as FRITZ!Fax (fax4box) adressbook (FritzAdr.dbf)
+  * **IP Phone phonebooks:** specify an entry in `ipPhonebooks` if the phone book is to be stored in your desired format (XML). There are currently four transformation templates stored in the `/lib/` directory:
+    * Yealink
+    * snom
+    * Grandstream
+    * jFritz (not a phone but similar XML structure)
 
 **Have a look in the [wiki](https://github.com/BlackSenator/carddav2fb/wiki) for further information!**
 
@@ -120,6 +123,23 @@ Alternativly using the `background-image` command it is possible to upload only 
 * settings in FRITZ!Fon: Einstellungen -> Anzeige -> Startbildschirme -> Klassisch -> Optionen -> Hintergrundbild
 * assignment is made via the internal number(s) of the handheld(s) in the 'fritzfons'-array in config.php
 * internal number have to be between '610' and '615', no '**'-prefix
+
+### Export phonebooks
+
+You can transform FRITZ!Box phonebook into different XML formats:
+
+* Yealink
+* snom
+* Grandstream
+* jFritz
+
+The transformation takes place using XSL files. You can adapt the existing files or add more of your own.
+
+You need to activate XSL module
+
+```console
+extension=xsl
+```
 
 ## Debugging
 
