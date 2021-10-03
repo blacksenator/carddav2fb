@@ -120,16 +120,11 @@ class RunCommand extends Command
             }
         }
 
-        // uploading jFritz phonebook
-        if (!empty($this->config['jfritz']['path'])) {
-            error_log('Selecting and uploading contact(s) for jFritz');
-            uploadjFritz($xmlPhonebook, $this->config['jfritz']);
-        }
+        // uploading IP phone phonebooks
+        if (!empty($this->config['ipPhonebooks'])) {
+            error_log('Exporting contact(s) for IP phones...');
+            getIPPhonebook($xmlPhonebook, $this->config['ipPhonebooks']);
 
-        // uploading jFritz phonebook
-        if (!empty($this->config['yealink']['path'])) {
-            error_log('Selecting and uploading contact(s) for Yealink');
-            uploadYealink($xmlPhonebook, $this->config['yealink']);
         }
 
         return 0;
