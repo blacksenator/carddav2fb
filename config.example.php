@@ -148,13 +148,28 @@ $config = [
         ]
     ],
 
-    'jfritz' => [                               // if path is set, a converted phone book is saved there
-        'path' => '',                           // e.g. 'C:\Users\abc\AppData\Roaming\JFritz\'
-        'phonebook' => 'jfritz.phonebook.xml',
-    ],
-
-    'yealink' => [                              // if path is set, a converted phone book is saved there
-        'path' => '',                           // e.g. 'C:\Users\abc\AppData\Roaming\Yealink\'
-        'phonebook' => 'LocalPhonebook.xml',
+    'ipPhonebooks' => [                         // uncomment your desired export(s)
+        /*
+        'jfritz' => [                           // name is just for informational purposes
+            'xsl' => 'jfritz.xsl',              // XSL transformation file in .\lib\
+            'path' => '',                       // the converted phone book is saved there
+            'file' => 'jfritz.phonebook.xml',
+        ],
+        'yealink' => [
+            'xsl' => 'Yealink.xsl',
+            'path' => '',
+            'file' => 'LocalPhonebook.xml',
+        ],
+        'snom' => [
+            'xsl' => 'snom.xsl',
+            'path' => '',
+            'file' => 'phonebook.xml',
+        ],
+        'grandstream' => [
+            'xsl' => 'grandstream.xsl',
+            'path' => '',
+            'file' => 'gs_phonebook.xml',
+        ],
+        */
     ],
 ];
