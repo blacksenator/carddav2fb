@@ -155,7 +155,7 @@ $config = [
             'path' => '',                       // the converted phone book is saved there
             'file' => 'jfritz.phonebook.xml',
         ],
-        'yealink' => [
+        'Yealink' => [
             'xsl' => 'Yealink.xsl',
             'path' => '',
             'file' => 'LocalPhonebook.xml',
@@ -165,10 +165,15 @@ $config = [
             'path' => '',
             'file' => 'phonebook.xml',
         ],
-        'grandstream' => [
+        'Grandstream' => [
             'xsl' => 'grandstream.xsl',
             'path' => '',
             'file' => 'gs_phonebook.xml',
+        ],
+        'Cisco' => [
+            'xsl' => 'Cisco.xsl',
+            'path' => '',
+            'file' => 'Phonebook.xml',
         ],
         */
     ],
