@@ -28,10 +28,11 @@ Additonal with this version (fork):
 * additional outputs:
   * **FRITZ!adr:** specify `fritzadr` if fax numbers should be extracted from the phone book and stored as FRITZ!Fax (fax4box) adressbook (FritzAdr.dbf)
   * **IP Phone phonebooks:** specify an entry in `ipPhonebooks` if the phone book is to be stored in your desired format (XML). There are currently four transformation templates stored in the `/lib/` directory:
-    * Yealink
-    * snom
+    * Cisco
     * Grandstream
     * jFritz (not a phone but similar XML structure)
+    * snom
+    * Yealink
 
 **Have a look in the [wiki](https://github.com/BlackSenator/carddav2fb/wiki) for further information!**
 
@@ -128,10 +129,11 @@ Alternativly using the `background-image` command it is possible to upload only 
 
 You can transform FRITZ!Box phonebook into different XML formats:
 
-* Yealink
-* snom
+* Cisco
 * Grandstream
 * jFritz
+* snom
+* Yealink
 
 The transformation takes place using XSL files. You can adapt the existing files or add more of your own.
 
