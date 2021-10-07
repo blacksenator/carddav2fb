@@ -859,25 +859,24 @@ function uploadFritzAdr(SimpleXMLElement $xmlPhonebook, $config)
  * IP phone phonebook according to its specific
  * transformation description
  *
- * @param SimpleXMLElement $xmlPhonebook
+ * @param SimpleXMLElement $fbXMLPhonebook
  * @param array $config
  * @return
  */
-function getIPPhonebook($xmlPhonebook, $config)
+function getIPPhonebook($fbXMLphonebook, $config)
 {
     $converter = new ipphones();
-    foreach($config as $ipPhone => $ipPhoneConfig) {
+    foreach ($config as $ipPhone => $ipPhoneConfig) {
         if (empty($ipPhoneConfig['xsl'])) {
             continue;
         }
         $converter->setXSL($ipPhoneConfig['xsl']);
         if (count($result = $converter->getValidationResult())) {
-            error_log('XSL Error: ' . implode(', ', $result) . PHP_EOL);
+            error_log('XSL Error: ' . implode(', ', $result));
         }
-        error_log('Converting into a ' . $ipPhone . ' phonebook' . PHP_EOL);
-        $ipPhoneXML = $converter->getIPPhonebook($xmlPhonebook);
-        file_put_contents($ipPhoneConfig['path'] . $ipPhoneConfig['file'], $ipPhoneXML);
+        $destination = $ipPhoneConfig['path'] . $ipPhoneConfig['file'];
+        error_log('... into a ' . $ipPhone . ' phonebook as: ' . $destination);
+        $ipPhoneXML = $converter->getIPPhonebook($fbXMLphonebook);
+        file_put_contents($destination, $ipPhoneXML);
     }
-
-
 }
