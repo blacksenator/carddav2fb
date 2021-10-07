@@ -122,7 +122,7 @@ class RunCommand extends Command
 
         // uploading IP phone phonebooks
         if (!empty($this->config['ipPhonebooks'])) {
-            error_log('Exporting contact(s) for IP phones...');
+            error_log('Converting contact(s) for IP phones...');
             getIPPhonebook($xmlPhonebook, $this->config['ipPhonebooks']);
 
         }
