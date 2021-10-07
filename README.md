@@ -27,7 +27,7 @@ Additonal with this version (fork):
 * converting vanity names to quickdial alias, so the keypad image could become more specific (e.g. '**8OMA' becomes 'Oma' instead of 'Hilde')
 * additional outputs:
   * **FRITZ!adr:** specify `fritzadr` if fax numbers should be extracted from the phone book and stored as FRITZ!Fax (fax4box) adressbook (FritzAdr.dbf)
-  * **IP Phone phonebooks:** specify an entry in `ipPhonebooks` if the phone book is to be stored in your desired format (XML). There are currently four transformation templates stored in the `/lib/` directory:
+  * **IP Phone phonebooks:** specify an entry in `ipPhonebooks` if the phone book is to be stored in your desired format (XML). There are currently five transformation templates stored in the `/lib/` directory:
     * Cisco
     * Grandstream
     * jFritz (not a phone but similar XML structure)
