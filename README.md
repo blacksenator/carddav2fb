@@ -13,15 +13,16 @@ This is a completely revised version of https://github.com/jens-maus/carddav2fb.
 * automatically preserves quickDial and vanity attributes of phone numbers set in FRITZ!Box Web GUI. Works without config.
 * automatically preserves internal numbers (e.g. if you use [Gruppenruf](https://avm.de/service/fritzbox/fritzbox-7590/wissensdatenbank/publication/show/1148_Interne-Rufgruppe-in-FRITZ-Box-einrichten-Gruppenruf/))
 * if more than nine phone numbers are included, the contact will be divided into a corresponding number of phonebook entries (any existing email addresses are assigned to the first set [there is no quantity limit!])
-* phone numbers are sorted by type. The order of the conversion values ('phoneTypes') determines the order in the phone book entry
+* phone numbers are sorted by type. The order of the conversion values (`phoneTypes`) determines the order in the phone book entry
 * the contact's UID of the CardDAV server is added to the phonebook entry (not visible in the FRITZ! Box GUI)
 * automatically preserves QuickDial and Vanity attributes of phone numbers set in FRITZ!Box Web GUI. Works without config. These data are saved separately in the internal FRITZ!Box memory under `../FRITZ/mediabox/Atrributes.csv` from loss.
 * generates an image with keypad and designated quickdial numbers (2-9), which can be uploaded to designated handhelds (see details below)
+* if `wildcardnumbers` is true a companies main number ending with '0' will be duplicated and ending will be replaced by '*'. A number range of direct dial in numbers will match to this phonebook entry.
 
 ## Requirements
 
 * PHP >7.3 or 8.0 (`apt-get install php php-curl php-mbstring php-xml`)
-* Composer (follow the installation guide at https://getcomposer.org/download/)
+* Composer (follow the [installation guide](https://getcomposer.org/download/))
 
 ## Installation
 
@@ -37,19 +38,19 @@ edit `config.example.php` and save as `config.php`
 
 ## Usage
 
-### List all commands:
+### List all commands
 
 ```console
 ./carddav2fb list
 ```
 
-### Complete processing:
+### Complete processing
 
 ```console
 ./carddav2fb run
 ```
 
-### Get help for a command:
+### Get help for a command
 
 ```console
 ./carddav2fb run -h
@@ -83,6 +84,21 @@ Uploading can also be included in uploading phonebook:
 * settings in FRITZ!Fon: Einstellungen -> Anzeige -> Startbildschirme -> Klassisch -> Optionen -> Hintergrundbild
 * assignment is made via the internal number(s) of the handheld(s) in the 'fritzfons'-array in config.php
 * internal number have to be between '610' and '615', no '**'-prefix
+
+### Wildcard number preconditions
+
+There is no way to assign a special predicate like this to a phone number in a vCard. In order to use this feature, several attributes must come together:
+
+1. the Organization field (ORG)must be filled
+2. the phone number must end with "0".
+3. the phone number must be marked as business ("WORK" or "MAIN")
+4. the phone number must be marked as preferred ("PREF").
+
+```console
+ORG:Bundesnetzagentur
+TEL;TYPE=WORK,PREF:029199550
+TEL;TYPE=WORK:0291 / 9955 - 206
+```
 
 ## Debugging
 

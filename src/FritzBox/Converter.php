@@ -21,7 +21,7 @@ class Converter
     }
 
     /**
-     * Convert Vcard to FritzBox XML
+     * Convert a vCard into a FritzBox XML contact
      * All conversion steps operate on $this->contact
      *
      * @param mixed $card
@@ -175,11 +175,14 @@ class Converter
         $phoneNumbers = [];
         $phoneTypes = $this->config['phoneTypes'] ?? [];
         foreach ($card->TEL as $key => $number) {
+            $wildcardNumber = [];
             // format number
             $number = $this->convertPhonenumber($number);
-            // get type
-            $type = 'other';
-            $telTypes = strtoupper($card->TEL[$key]->parameters['TYPE'] ?? '');
+            // get types
+            $telTypes = strtoupper($card->TEL[$key]['TYPE'] ?? '');
+            $wildcardNumber = $this->getWildcardNumber($card->ORG, $number, $telTypes);
+
+            $type = 'other';                                    // default
             foreach ($phoneTypes as $phoneType => $value) {
                 if (strpos($telTypes, strtoupper($phoneType)) !== false) {
                     $type = strtolower((string)$value);
@@ -194,6 +197,9 @@ class Converter
                 'number' => (string)$number,
             ];
             $phoneNumbers[] = $addNumber;
+            if (count($wildcardNumber)) {
+                $phoneNumbers[] = $wildcardNumber;
+            }
         }
 
         // sort phone numbers
@@ -294,5 +300,35 @@ class Converter
 
         error_log("No data for conversion `$property`");
         return '';
+    }
+
+    /**
+     * tranform an identified company main number to an additional
+     * wildcard version where the ending "0" is replaced by "*"
+     * The FRITZ!Box can find the caller in the telephonebook
+     * if the direct dial number matches the wildcard
+     * Example:
+     * 029199550 is duplicated to 02919955*
+     * and
+     * 02919955206 would be shown with its name ("Bundesnetzagentur")
+     *
+     * @param string $org (vCard 'ORG')
+     * @param string $number
+     * @param string $types phone types
+     * @return array
+     */
+    private function getWildcardNumber($org, $number, $types)
+    {
+        $wildcard = $this->config['wildcardNumber'] ?? false;
+        if ($wildcard && isset($org) && substr($number, -1) == '0' &&
+            (strpos($types, 'WORK') !== false || strpos($types, 'MAIN') !== false)
+            && strpos($types, 'PREF') !== false)  {
+            return [
+                'type'   => 'work',
+                'number' => rtrim($number, '0') . '*',
+            ];
+        }
+
+        return [];
     }
 }

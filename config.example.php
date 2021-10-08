@@ -107,6 +107,8 @@ $config = [
             ')'   => '',
             '/'   => '',
             '-'   => ''
-        ]
+        ],
+
+        'wildcardNumber' => false,       // set true if a main company number with a wildcard is to be added
     ]
 ];
