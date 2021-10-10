@@ -794,8 +794,9 @@ function checkUpdates($oldPhonebook, $newPhonebook, $config)
     foreach ($oldPhonebook->phonebook->contact as $contact) {
         $numbers = [];                                              // container for ew numbers per contact
         foreach ($contact->telephony->number as $number) {
-            if ((substr($number, 0, 1) == '*') ||                   // skip internal numbers
-                (substr($number, 0, 1) == '#') ||
+            if ((substr($number, 0, 1) === '*') ||                  // skip internal numbers
+                (substr($number, 0, 1) === '#') ||
+                (substr($number, -1) === '*') ||                    // number range (wildcard instad of direct dial in)
                 (strpos($number, '00@hd-telefonie.avm.de'))) {
                 continue;
             }
@@ -813,7 +814,7 @@ function checkUpdates($oldPhonebook, $newPhonebook, $config)
                     $emails[] = (string)$email;
                 }
             }
-            $vip   = $contact->category;
+            $vip = $contact->category;
             // assemble vCard from new entry(s)
             $new_vCard = $eMailer->getvCard($name, $numbers, $emails, $vip);
             // send new entry as vCard to designated reply adress

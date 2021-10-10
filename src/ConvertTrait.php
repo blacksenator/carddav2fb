@@ -2,6 +2,8 @@
 
 namespace blacksenator;
 
+use Sabre\VObject\Component\VCard;
+
 /**
  * This trait provides basic conversion functions
  *
@@ -36,5 +38,25 @@ trait ConvertTrait
         }
 
         return $result;
+    }
+
+    /**
+     * convert FRITZ!Box types to standard vCard types
+     *
+     * @param string $fbType
+     * @return string $vCardType
+     */
+    protected function getvCardType($fbType)
+    {
+        $vCardType = '';
+        if ($fbType == 'fax_work') {
+            $vCardType = 'FAX';
+        } elseif ($fbType == 'mobile') {
+            $vCardType = 'CELL';
+        } else {        // home & work
+            $vCardType = strtoupper($fbType);
+        }
+
+        return $vCardType;
     }
 }

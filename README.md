@@ -35,14 +35,14 @@ Additonal with this version (fork):
 ## Requirements
 
 * PHP >7.3 or 8.0 (incl. gd, soap, xsl)
-* Composer (follow the installation guide at <https://getcomposer.org/download/>)
+* Composer (follow the [installation guide](https://getcomposer.org/download/))
 
 ## Installation
 
 Install carddav2fb:
 
 ```console
-git clone https://github.com/andig/carddav2fb.git
+git clone https://github.com/BlackSenator/carddav2fb.git
 cd carddav2fb
 composer install --no-dev
 ```

@@ -3,10 +3,6 @@
 namespace blacksenator\ReplyMail;
 
 /**
- * class fritzvCard delivers a simple function based on VCard
- * to provide a vcf file whose data is based on the FRITZ!Box
- * phonebook entries
- *
  * class replymail delivers a simple function based on PHPMailer
  *
  * Copyright (c) 2021 Volker Püschel
@@ -21,7 +17,15 @@ class replymail
 {
     use ConvertTrait;
 
-    private $vCard;
+    const EMAIL_SBJCT = 'Newer contact was found in phonebook: ';
+    const EMAIL_TEXT = <<<EOD
+    carddav2fb found the attached contact in your Fritz!Box telephone book, but not in your upload data.
+
+    Please check if you would like to keep this information and maybe add it to your contacts on the CardDAV server:
+
+    EOD;
+    CONST VIP_INFO = 'This contact was marked as important.\nSuggestion: assign to a VIP category or group.';
+
     private $mail;
 
     public function __construct()
@@ -42,33 +46,27 @@ class replymail
      */
     public function getvCard(string $name, array $numbers, array $emails = [], string $vip = '')
     {
-        $this->vCard = new VObject\Component\VCard;
-        $this->vCard->VERSION = '3.0';          // the default VERSION:4.0 causes problems with umlauts at Apple
+        $vCard = new VObject\Component\VCard;
+        $vCard->VERSION = '3.0';          // the default VERSION:4.0 causes problems with umlauts at Apple
         $parts = $this->getNameParts($name);
         if (isset($parts['lastname'])) {
-            $this->vCard->add('FN', $parts['firstname'] . ' ' . $parts['lastname']);
-            $this->vCard->add('N', $parts);
+            $vCard->add('FN', $parts['firstname'] . ' ' . $parts['lastname']);
+            $vCard->add('N', $parts);
         } else {
-            $this->vCard->add('FN', $parts['company']);
-            $this->vCard->add('ORG', $parts['company']);
+            $vCard->add('FN', $parts['company']);
+            $vCard->add('ORG', $parts['company']);
         }
         foreach ($numbers as $number => $type) {
-            if ($type == 'fax_work') {
-                $this->vCard->add('TEL', $number, ['type' => 'FAX']);
-            } elseif ($type == 'mobile') {
-                $this->vCard->add('TEL', $number, ['type' => 'CELL']);
-            } else {        // home & work
-                $this->vCard->add('TEL', $number, ['type' => strtoupper($type)]);
-            }
+            $vCard->add('TEL', $number, ['type' => $this->getvCardType($type)]);
         }
         foreach ($emails as $email) {
-            $this->vCard->add('EMAIL', $email);
+            $vCard->add('EMAIL', $email);
         }
         if ($vip == 1) {
-            $this->vCard->add('NOTE', 'This contact was marked as important.\nSuggestion: assign to a VIP category or group.');
+            $vCard->add('NOTE', self::VIP_INFO);
         }
 
-        return $this->vCard;
+        return $vCard;
     }
 
     /**
@@ -102,15 +100,10 @@ class replymail
     public function sendReply($phonebook, $attachment, $label)
     {
         $this->mail->clearAttachments();
-        $this->mail->Subject = 'Newer contact was found in phonebook: ' . $phonebook;  //Set the subject line
-        $this->mail->Body = <<<EOD
-carddav2fb found the attached contact in your Fritz!Box telephone book, but not in your upload data.
-
-Please check if you would like to keep this information and maybe add it to your contacts on the CardDAV server:
-
-EOD;
+        $this->mail->Subject = self::EMAIL_SBJCT . $phonebook;      //Set the subject line
+        $this->mail->Body = self::EMAIL_TEXT;
         $this->mail->addStringAttachment($attachment, $label, 'quoted-printable', 'text/x-vcard');
-        if (!$this->mail->send()) {                                     // send the message, check for errors
+        if (!$this->mail->send()) {                                 // send the message, check for errors
             echo 'Mailer Error: ' . $this->mail->ErrorInfo;
             return false;
         }
