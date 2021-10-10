@@ -2,11 +2,7 @@
 
 Purpose of the software is the (automatic) uploading of contact data from CardDAV servers as a phone book into an AVM FRITZ!Box.
 
-<<<<<<< HEAD
 This is a completely revised version of [https://github.com/jens-maus/carddav2fb][descent].
-=======
-This is an extendeded version of <https://github.com/andig/carddav2fb>
->>>>>>> f668780 (refactoring of the telephone book output for other purposes)
 
 ## Features
 
@@ -46,7 +42,7 @@ Additonal with this version (fork):
 Install carddav2fb:
 
 ```console
-git clone https://github.com/andig/carddav2fb.git
+git clone https://github.com/BlackSenator/carddav2fb.git
 cd carddav2fb
 composer install --no-dev
 ```
