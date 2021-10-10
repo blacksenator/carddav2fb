@@ -144,7 +144,7 @@ extension=xsl
 
 There is no way to assign a special predicate like this to a phone number in a vCard. In order to use this feature, several attributes must come together:
 
-1. the Organization field (ORG)must be filled
+1. the organization field (ORG) must be filled
 2. the phone number must end with "0".
 3. the phone number must be marked as business ("WORK" or "MAIN")
 4. the phone number must be marked as preferred ("PREF").
