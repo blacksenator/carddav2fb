@@ -15,3 +15,8 @@ test.php
 wolf_cfg.php
 .vscode/launch.json
 .vscode/task.json
+/lib/phonebook.xml
+/lib/gs_phonebook.xml
+/lib/jfritz.phonebook.xml
+/lib/LocalPhonebook.xml
+/assets/carddav2fb.pptx

@@ -178,13 +178,5 @@ $config = [
         */
     ],
 
-    'phoneReplaceCharacters' => [
-            '+49' => '',  // router is usually operated in 'DE; '0049' could also be part of a phone number
-            '('   => '',
-            ')'   => '',
-            '/'   => '',
-            '-'   => ''
-        ],
-
     'wildcardNumber' => false,       // set true if a main company number with a wildcard is to be added
 ];
