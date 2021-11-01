@@ -156,7 +156,7 @@ $config = [
             'file' => 'jfritz.phonebook.xml',
         ],
         'Yealink' => [
-            'xsl' => 'Yealink.xsl',
+            'xsl' => 'Yealink.xsl',             // alternative: 'Yealink_2.xsl'
             'path' => '',
             'file' => 'LocalPhonebook.xml',
         ],
