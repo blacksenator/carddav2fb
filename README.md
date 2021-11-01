@@ -29,7 +29,7 @@ Additonal with this version (fork):
     * Grandstream
     * jFritz (not a phone but similar XML structure)
     * snom
-    * Yealink
+    * Yealink (two different XSL transformations)
 
 **Have a look in the [wiki](https://github.com/BlackSenator/carddav2fb/wiki) for further information!**
 
