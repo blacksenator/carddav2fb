@@ -216,6 +216,7 @@ class Converter
             return [];
         }
         $phoneNumbers = [];
+        $wildcardNumbers = [];
         $phoneTypes = $this->config['phoneTypes'] ?? [];
         foreach ($card->TEL as $key => $number) {
             $wildcardNumber = [];
@@ -256,7 +257,7 @@ class Converter
 =======
             $phoneNumbers[] = $addNumber;
             if (count($wildcardNumber)) {
-                $phoneNumbers[] = $wildcardNumber;
+                $wildcardNumbers[] = $wildcardNumber;
             }
 >>>>>>> aebdea6 (add wildcard number)
         }
@@ -283,7 +284,7 @@ class Converter
             }
         });
 
-        return $phoneNumbers;
+        return array_merge($phoneNumbers, $wildcardNumbers);
     }
 
     /**
