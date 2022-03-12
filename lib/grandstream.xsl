@@ -4,6 +4,7 @@
 <!-- MIT Licence -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:output method="xml" indent="yes" encoding="utf-8" />
+<xsl:strip-space elements="*"/>
 
 <xsl:template match="phonebooks/phonebook">
     <AdressBook>
@@ -23,7 +24,7 @@
 
     <xsl:for-each select=".">
         <id>
-            <xsl:value-of select="concat(count(ancestor::node()), '00000000', count(preceding::node()))" />
+            <xsl:value-of select="position()" />
         </id>
     </xsl:for-each>
     
