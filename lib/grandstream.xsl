@@ -7,20 +7,17 @@
 <xsl:strip-space elements="*"/>
 
 <xsl:template match="phonebooks/phonebook">
-    <AdressBook>
+    <AddressBook>
         <version>1</version>
         <xsl:apply-templates select="contact" />
-    </AdressBook>
+    </AddressBook>
 </xsl:template>
 
 <xsl:template match="contact">
     <Contact>
-
-        <xsl:for-each select=".">
-            <id>
-                <xsl:value-of select="position()" />
-            </id>
-        </xsl:for-each>
+        <id>
+            <xsl:value-of select="position()" />
+        </id>
         
         <xsl:apply-templates select="person/realName" />
         <xsl:apply-templates select="telephony/number" />
