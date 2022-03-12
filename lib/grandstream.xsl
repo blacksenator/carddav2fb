@@ -14,18 +14,19 @@
 
 <xsl:template match="contact">
     <Contact>
-        <xsl:for-each select="contact">
-            <id>
-                <xsl:value-of select="generate-id()" />
-            </id>
-        </xsl:for-each>
-        
         <xsl:apply-templates select="person/realName" />
         <xsl:apply-templates select="telephony/number" />
     </Contact>
 </xsl:template>
 
 <xsl:template match="person/realName">
+
+    <xsl:for-each select=".">
+        <id>
+            <xsl:value-of select="generate-id()" />
+        </id>
+    </xsl:for-each>
+    
     <xsl:variable name="fullname" select="." />
     <xsl:choose>
         <xsl:when test="contains($fullname,',')">
