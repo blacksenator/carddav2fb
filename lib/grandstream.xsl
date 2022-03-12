@@ -23,7 +23,7 @@
 
     <xsl:for-each select=".">
         <id>
-            <xsl:value-of select="generate-id()" />
+            <xsl:value-of select="concat(count(ancestor::node()), '00000000', count(preceding::node()))" />
         </id>
     </xsl:for-each>
     
