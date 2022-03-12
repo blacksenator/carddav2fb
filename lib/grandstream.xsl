@@ -15,7 +15,9 @@
 <xsl:template match="contact">
     <Contact>
         <xsl:for-each select="contact">
-            <id>generate-id()</id>
+            <id>
+                <xsl:value-of select="generate-id()" />
+            </id>
         </xsl:for-each>
         
         <xsl:apply-templates select="person/realName" />
