@@ -16,6 +16,10 @@
 <xsl:template match="contact">
     <xsl:if test="not(position() > 999)">
         <Contact>
+            <id>
+                <xsl:value-of select="position()" />
+            </id>
+            
             <xsl:apply-templates select="person/realName" />
             <xsl:apply-templates select="telephony/number" />
         </Contact>
