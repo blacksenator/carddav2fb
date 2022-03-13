@@ -4,19 +4,26 @@
 <!-- MIT Licence -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:output method="xml" indent="yes" encoding="utf-8" />
+<xsl:strip-space elements="*"/>
 
 <xsl:template match="phonebooks/phonebook">
-    <AdressBook>
+    <AddressBook>
         <version>1</version>
         <xsl:apply-templates select="contact" />
-    </AdressBook>
+    </AddressBook>
 </xsl:template>
 
 <xsl:template match="contact">
-    <Contact>
-        <xsl:apply-templates select="person/realName" />
-        <xsl:apply-templates select="telephony/number" />
-    </Contact>
+    <xsl:if test="not(position() > 999)">
+        <Contact>
+            <id>
+                <xsl:value-of select="position()" />
+            </id>
+            
+            <xsl:apply-templates select="person/realName" />
+            <xsl:apply-templates select="telephony/number" />
+        </Contact>
+    </xsl:if>
 </xsl:template>
 
 <xsl:template match="person/realName">
