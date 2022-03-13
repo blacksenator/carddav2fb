@@ -6,10 +6,10 @@
 <xsl:output method="xml" indent="yes" encoding="utf-8" />
 
 <xsl:template match="phonebooks/phonebook">
-    <AdressBook>
+    <AddressBook>
         <version>1</version>
         <xsl:apply-templates select="contact" />
-    </AdressBook>
+    </AddressBook>
 </xsl:template>
 
 <xsl:template match="contact">
