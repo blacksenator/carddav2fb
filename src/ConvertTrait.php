@@ -14,11 +14,11 @@ use Sabre\VObject\Component\VCard;
 trait ConvertTrait
 {
     /**
-     * delivers name parts which consisted only of one string
-     * if the is separated by a comma, then it is assumed that
-     * it is '[lastname], [firstname]' otherwise [company]
+     * delivers name parts which consisted only of one string. If the string is
+     * separated by a comma, then it is assumed that it is
+     * '[lastname], [firstname]' otherwise [company]
      *
-     * @param string §realName
+     * @param string $realName
      * @return array $result
      */
     protected function getNameParts($realName)

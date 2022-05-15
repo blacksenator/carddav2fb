@@ -49,9 +49,9 @@ class replymail
         $vCard = new VObject\Component\VCard;
         $vCard->VERSION = '3.0';          // the default VERSION:4.0 causes problems with umlauts at Apple
         $parts = $this->getNameParts($name);
-        if (isset($parts['lastname'])) {
+        if (empty($parts['company'])) {
             $vCard->add('FN', $parts['firstname'] . ' ' . $parts['lastname']);
-            $vCard->add('N', $parts);
+            $vCard->add('N', [$parts['lastname'], $parts['firstname']]);
         } else {
             $vCard->add('FN', $parts['company']);
             $vCard->add('ORG', $parts['company']);
