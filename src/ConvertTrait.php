@@ -2,10 +2,9 @@
 
 namespace blacksenator;
 
-use Sabre\VObject\Component\VCard;
-
 /**
- * This trait provides basic conversion functions
+ * This trait provides basic conversion functions between vCard and FRITZ!Box
+ * telephonebook data
  *
  * Copyright (c) 2021 Volker Püschel
  * @license MIT
