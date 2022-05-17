@@ -606,7 +606,7 @@ function getQuickdials(array $attributes, bool $alias = false)
 function uploadBackgroundImage($attributes, array $config)
 {
     $quickdials = getQuickdials($attributes, $config['quickdial_alias'] ?? false);
-    if (!count($quickdials)) {
+    if (!$quickdials) {
         error_log('No quickdial numbers are set for a background image upload');
         return;
     }
@@ -642,9 +642,9 @@ function uploadAttributes($phonebook, $config)
     $secure = $fritzbox['ftp']['plain'] ?? false;
     $ftp_conn = getFtpConnection($fritzbox['url'], $fritzbox['user'], $fritzbox['password'], '/FRITZ/mediabox', $secure);
     // backup already stored data
-    if (ftp_size($ftp_conn, 'Attributes.csv') != -1) {                  // file already exists
-        if (ftp_size($ftp_conn, 'Attributes.csv.bak') != -1) {          // backaup file already exists
-            ftp_delete($ftp_conn, 'Attributes.csv.bak');                // delete backup file
+    if (ftp_size($ftp_conn, 'Attributes.csv') != -1) {          // file already exists
+        if (ftp_size($ftp_conn, 'Attributes.csv.bak') != -1) {  // backaup file already exists
+            ftp_delete($ftp_conn, 'Attributes.csv.bak');        // delete backup file
         }
         ftp_rename($ftp_conn, 'Attributes.csv', 'Attributes.csv.bak');  // create a new backup file
     }
@@ -752,7 +752,7 @@ function phonebookToVCF(SimpleXMLElement $phoneBook, bool $images = false, array
         $vCard = $saver->getvCard($name, $numbers, $emails, $vip);
         $vCard->UID = (string)$contact->carddav_uid;
         if ($images && isset($contact->person->imageURL)) {
-            $memStream = fopen('php://memory', 'r+');               // use fast in-memory file stream
+            $memStream = fopen('php://memory', 'r+');   // use fast in-memory file stream
             $imgLocation = strstr((string)$contact->person->imageURL, 'InternerSpeicher');
             $imgLocation = str_replace('InternerSpeicher', '', $imgLocation);
             if (ftp_fget($ftp_conn, $memStream, $imgLocation, FTP_BINARY)) {
@@ -771,9 +771,9 @@ function phonebookToVCF(SimpleXMLElement $phoneBook, bool $images = false, array
 
 /**
  * this function checked if all phone numbers from the FRITZ!Box phonebook are
- * included in the new phonebook. If not so the number(s) and type(s) resp.
- * vip flag are compiled in a vCard and sent as a vcf file with the name as
- * filename will be send as an email attachement
+ * included in the new phonebook. If not so the number(s) and type(s) resp. VIP
+ * flag are compiled in a vCard and sent as a vcf file with the name as filename
+ * will be send as an email attachement
  *
  * @param SimpleXMLElement $oldPhonebook
  * @param SimpleXMLElement $newPhonebook
@@ -805,7 +805,7 @@ function checkUpdates($oldPhonebook, $newPhonebook, $config)
                 $numbers[(string)$number] = (string)$number['type'];
             }
         }
-        if (count($numbers)) {                                      // one or more new numbers found
+        if ($numbers) {                         // one or more new numbers found
             // fetch data
             $emails = [];
             $name  = $contact->person->realName;
@@ -823,12 +823,14 @@ function checkUpdates($oldPhonebook, $newPhonebook, $config)
             }
         }
     }
+
     return $i;
 }
 
 /**
- * if $config['fritzbox']['fritzadr'] is set, than all contact (names) with a fax number
- * are copied into a dBase III database fritzadr.dbf for FRITZ!fax purposes
+ * If $config['fritzbox']['fritzadr'] is set, than all contact (names) with a
+ * fax number (type = 'fax_work') are copied into a dBase III database file
+ * fritzadr.dbf for FRITZ!fax purposes
  *
  * @param SimpleXMLElement $xmlPhonebook phonebook in FRITZ!Box format
  * @param array $config
@@ -843,7 +845,7 @@ function uploadFritzAdr(SimpleXMLElement $xmlPhonebook, $config)
     $memstream = fopen('php://memory', 'r+');
     $converter = new fritzadr;
     $faxContacts = $converter->getFAXcontacts($xmlPhonebook);       // extracting
-    if (count($faxContacts)) {
+    if ($faxContacts) {
         fputs($memstream, $converter->getdBaseData($faxContacts));
         rewind($memstream);
         if (!ftp_fput($ftp_conn, 'fritzadr.dbf', $memstream, FTP_BINARY)) {
@@ -856,9 +858,8 @@ function uploadFritzAdr(SimpleXMLElement $xmlPhonebook, $config)
 }
 
 /**
- * converting FRITZ!Box XML phonebook into an
- * IP phone phonebook according to its specific
- * transformation description
+ * converting FRITZ!Box XML phonebook into an IP phone phonebook according to its
+ * specific transformation description
  *
  * @param SimpleXMLElement $fbXMLPhonebook
  * @param array $config
