@@ -29,7 +29,11 @@ class Converter
     private $phoneSort = [];
     private $numberConversion = false;
     private $vipCategories;
+<<<<<<< HEAD
     private $emailTypes = [];
+=======
+    private $wildCard;
+>>>>>>> f9ea33c (Coding improved by some simplifications, performance increased by outsourcing the determination of characteristic values to the constructor)
 
     public function __construct(array $config)
     {
@@ -37,29 +41,44 @@ class Converter
         $this->phoneSort = $this->getPhoneTypesSortOrder();
         !$this->config['phoneReplaceCharacters'] ?: $this->numberConversion = true;
         $this->vipCategories = $this->config['vip'] ?? [];
+<<<<<<< HEAD
         $this->emailTypes = $this->config['emailTypes'] ?? [];
     }
 
     /**
 <<<<<<< HEAD
+=======
+        $this->wildCard = $this->config['wildcardNumber'] ?? false;
+    }
+
+    /**
+>>>>>>> f9ea33c (Coding improved by some simplifications, performance increased by outsourcing the determination of characteristic values to the constructor)
      * Convert a vCard into a FritzBox XML contact. All conversion steps operate
      * on $this->contact. If the vCard contains more than nine valid telephone
      * numbers, the contact will be divided up, since the FRITZ!Box only allows
      * a maximum of nine telephone numbers per contact. vCards without a phone
      * number will be ignored
+<<<<<<< HEAD
 =======
      * Convert a vCard into a FritzBox XML contact
      * All conversion steps operate on $this->contact
 >>>>>>> aebdea6 (add wildcard number)
+=======
+>>>>>>> f9ea33c (Coding improved by some simplifications, performance increased by outsourcing the determination of characteristic values to the constructor)
      *
      * @param mixed $card
      * @return SimpleXMLElement[]
      */
     public function convert($card): array
     {
+<<<<<<< HEAD
         $contactNumbers  = $this->getPhoneNumbers($card);   // get array of prequalified phone numbers
         $adresses = $this->getEmailAdresses($card);     // get array of prequalified email adresses
         $uid = (string)$card->UID;
+=======
+        $allNumbers  = $this->getPhoneNumbers($card);   // get array of prequalified phone numbers
+        $adresses = $this->getEmailAdresses($card);     // get array of prequalified email adresses
+>>>>>>> f9ea33c (Coding improved by some simplifications, performance increased by outsourcing the determination of characteristic values to the constructor)
 
         $contacts = [];
         if (count($contactNumbers) > 9) {
@@ -204,9 +223,17 @@ class Converter
     }
 
     /**
+<<<<<<< HEAD
      * Returns an array of prequalified phone numbers. This is neccesseary to
      * handle the maximum of nine phone numbers per FRITZ!Box phonebook contacts
      * any additionally added placeholder numbers are appended to the end of the array
+=======
+     * Return an array of prequalified phone numbers. This is neccesseary to
+     * handle the maximum of nine phone numbers per FRITZ!Box phonebook contacts.
+     * Any additionally added placeholder numbers (wildcard numbers) are appended
+     * to the very end of the array, so that they appear last in the lists on
+     * FRITZ!Fon
+>>>>>>> f9ea33c (Coding improved by some simplifications, performance increased by outsourcing the determination of characteristic values to the constructor)
      *
      * @param mixed $card
      * @return array
@@ -217,11 +244,12 @@ class Converter
             return [];
         }
         $phoneNumbers = [];
-        $wildcardNumbers = [];
+        $wildCardNumbers = [];
         $phoneTypes = $this->config['phoneTypes'] ?? [];
         foreach ($card->TEL as $key => $number) {
-            $wildcardNumber = [];
+            $wildCardNumber = [];
             // format number
+<<<<<<< HEAD
 <<<<<<< HEAD
             if ($this->numberConversion) {
                 $number = $this->convertPhoneNumber($number);
@@ -231,12 +259,21 @@ class Converter
             $type = self::PHONE_TYPE;                           // set default
 =======
             $number = $this->convertPhonenumber($number);
+=======
+            if ($this->numberConversion) {
+                $number = $this->convertPhoneNumber($number);
+            }
+>>>>>>> f9ea33c (Coding improved by some simplifications, performance increased by outsourcing the determination of characteristic values to the constructor)
             // get types
             $telTypes = strtoupper($card->TEL[$key]['TYPE'] ?? '');
-            $wildcardNumber = $this->getWildcardNumber($card->ORG, $number, $telTypes);
+            $wildCardNumber = $this->getWildcardNumber($card->ORG, $number, $telTypes);
 
+<<<<<<< HEAD
             $type = 'other';                                    // default
 >>>>>>> aebdea6 (add wildcard number)
+=======
+            $type = self::PHONE_TYPE;                           // set default
+>>>>>>> f9ea33c (Coding improved by some simplifications, performance increased by outsourcing the determination of characteristic values to the constructor)
             foreach ($phoneTypes as $phoneType => $value) {
                 if (strpos($telTypes, strtoupper($phoneType)) !== false) {
                     $type = strtolower((string)$value);
@@ -250,6 +287,7 @@ class Converter
                 'type'   => $type,
                 'number' => (string)$number,
             ];
+<<<<<<< HEAD
 <<<<<<< HEAD
         }
         // sort phone numbers
@@ -291,8 +329,30 @@ class Converter
                 return ($idx1 > $idx2) ? 1 : -1;
             }
         });
+=======
 
-        return count($wildcardNumbers) ? array_merge($phoneNumbers, $wildcardNumbers) : $phoneNumbers;
+            // add possible wildcard numbers
+            if ($this->wildCard) {
+                $wildCardNumber = $this->getWildcardNumber($card->ORG, $number, $telTypes);
+                !$wildCardNumber ?: $wildCardNumbers[] = $wildCardNumber;
+            }
+        }
+
+        // sort phone numbers
+        if ($phoneNumbers) {
+            usort($phoneNumbers, function ($a, $b) {
+                $idx1 = array_search($a['type'], $this->phoneSort, true);
+                $idx2 = array_search($b['type'], $this->phoneSort, true);
+                if ($idx1 == $idx2) {
+                    return ($a['number'] > $b['number']) ? 1 : -1;
+                } else {
+                    return ($idx1 > $idx2) ? 1 : -1;
+                }
+            });
+        }
+>>>>>>> f9ea33c (Coding improved by some simplifications, performance increased by outsourcing the determination of characteristic values to the constructor)
+
+        return array_merge($phoneNumbers, $wildCardNumbers);
     }
 
     /**
@@ -375,14 +435,22 @@ class Converter
     }
 
     /**
-     * tranform an identified company main number to an additional
-     * wildcard version where the ending "0" is replaced by "*"
-     * The FRITZ!Box can find the caller in the telephonebook
-     * if the direct dial number matches the wildcard
+     * tranform an identified company main number to an additional wildcard
+     * version where the ending "0" is replaced by "*". The FRITZ!Box can find
+     * the caller in the telephonebook if the direct dial number matches the
+     * wildcard
      * Example:
      * 029199550 is duplicated to 02919955*
      * and
-     * 02919955206 would be shown with its name ("Bundesnetzagentur")
+     * 02919955206 would be shown on FRITZ!Fon with its name "Bundesnetzagentur"
+     *
+     * Preconditions:
+     * - Contact it is a company (ORG is used as name)
+     * - phone number attribute type is declared as company ('WORK' or 'MAIN')
+     * - phone number ends with '0' and is selected as type 'PREF'
+     * The last precondition (type='PREF') is the attribute with which users can
+     * control in their vCards (in detail) whether a number should be added as
+     * wildcard or not
      *
      * @param string $org (vCard 'ORG')
      * @param string $number
@@ -391,8 +459,7 @@ class Converter
      */
     private function getWildcardNumber($org, $number, $types)
     {
-        $wildcard = $this->config['wildcardNumber'] ?? false;
-        if ($wildcard && isset($org) && substr($number, -1) == '0' &&
+        if ($this->wildCard && isset($org) && substr($number, -1) == '0' &&
             (strpos($types, 'WORK') !== false || strpos($types, 'MAIN') !== false)
             && strpos($types, 'PREF') !== false)  {
             return [
