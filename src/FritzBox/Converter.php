@@ -206,6 +206,7 @@ class Converter
     /**
      * Returns an array of prequalified phone numbers. This is neccesseary to
      * handle the maximum of nine phone numbers per FRITZ!Box phonebook contacts
+     * any additionally added placeholder numbers are appended to the end of the array
      *
      * @param mixed $card
      * @return array
@@ -256,10 +257,17 @@ class Converter
             $phoneNumbers = $this->sortPhoneNumbers($phoneNumbers);
 =======
             $phoneNumbers[] = $addNumber;
+<<<<<<< HEAD
             if (count($wildcardNumber)) {
                 $wildcardNumbers[] = $wildcardNumber;
             }
 >>>>>>> aebdea6 (add wildcard number)
+=======
+
+            // get possible wildcard numbers
+            $wildcardNumber = $this->getWildcardNumber($card->ORG, $number, $telTypes);
+            !count($wildcardNumber) ?: $wildcardNumbers[] = $wildcardNumber;
+>>>>>>> 4062ed1 (better handling wildcard phone numbers and large vcf files)
         }
 
         return $phoneNumbers;
@@ -284,7 +292,7 @@ class Converter
             }
         });
 
-        return array_merge($phoneNumbers, $wildcardNumbers);
+        return count($wildcardNumbers) ? array_merge($phoneNumbers, $wildcardNumbers) : $phoneNumbers;
     }
 
     /**
