@@ -21,7 +21,7 @@ $config = [
             ],
             // 'method' => 'PROPFIND';  // uncomment if 'REPORT' (default) causes an error (e.g. t-online)
         ],
-/* add as many as you need
+    /* add as many as you need
         [
             'url' => 'https://...',
             'user' => '',
@@ -145,7 +145,7 @@ $config = [
             '+499'  => '09',
             '+49'   => '',
             '+'     => '00'                     // normalize foreign numbers
-        ]
+        ],
     ],
 
     'ipPhonebooks' => [                         // uncomment your desired export(s)
@@ -177,4 +177,7 @@ $config = [
         ],
         */
     ],
+
+    'wildcardNumber' => false,       // set true if a main company number with a wildcard is to be added
+
 ];
