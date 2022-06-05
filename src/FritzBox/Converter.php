@@ -41,11 +41,16 @@ class Converter
     }
 
     /**
+<<<<<<< HEAD
      * Convert a vCard into a FritzBox XML contact. All conversion steps operate
      * on $this->contact. If the vCard contains more than nine valid telephone
      * numbers, the contact will be divided up, since the FRITZ!Box only allows
      * a maximum of nine telephone numbers per contact. vCards without a phone
      * number will be ignored
+=======
+     * Convert a vCard into a FritzBox XML contact
+     * All conversion steps operate on $this->contact
+>>>>>>> aebdea6 (add wildcard number)
      *
      * @param mixed $card
      * @return SimpleXMLElement[]
@@ -213,13 +218,23 @@ class Converter
         $phoneNumbers = [];
         $phoneTypes = $this->config['phoneTypes'] ?? [];
         foreach ($card->TEL as $key => $number) {
+            $wildcardNumber = [];
             // format number
+<<<<<<< HEAD
             if ($this->numberConversion) {
                 $number = $this->convertPhoneNumber($number);
             }
             // get types
             $telTypes = strtoupper($card->TEL[$key]['TYPE'] ?? '');
             $type = self::PHONE_TYPE;                           // set default
+=======
+            $number = $this->convertPhonenumber($number);
+            // get types
+            $telTypes = strtoupper($card->TEL[$key]['TYPE'] ?? '');
+            $wildcardNumber = $this->getWildcardNumber($card->ORG, $number, $telTypes);
+
+            $type = 'other';                                    // default
+>>>>>>> aebdea6 (add wildcard number)
             foreach ($phoneTypes as $phoneType => $value) {
                 if (strpos($telTypes, strtoupper($phoneType)) !== false) {
                     $type = strtolower((string)$value);
@@ -233,10 +248,17 @@ class Converter
                 'type'   => $type,
                 'number' => (string)$number,
             ];
+<<<<<<< HEAD
         }
         // sort phone numbers
         if (count($phoneNumbers) > 1) {
             $phoneNumbers = $this->sortPhoneNumbers($phoneNumbers);
+=======
+            $phoneNumbers[] = $addNumber;
+            if (count($wildcardNumber)) {
+                $phoneNumbers[] = $wildcardNumber;
+            }
+>>>>>>> aebdea6 (add wildcard number)
         }
 
         return $phoneNumbers;
@@ -341,5 +363,35 @@ class Converter
 
         error_log("No data for conversion `$property`");
         return '';
+    }
+
+    /**
+     * tranform an identified company main number to an additional
+     * wildcard version where the ending "0" is replaced by "*"
+     * The FRITZ!Box can find the caller in the telephonebook
+     * if the direct dial number matches the wildcard
+     * Example:
+     * 029199550 is duplicated to 02919955*
+     * and
+     * 02919955206 would be shown with its name ("Bundesnetzagentur")
+     *
+     * @param string $org (vCard 'ORG')
+     * @param string $number
+     * @param string $types phone types
+     * @return array
+     */
+    private function getWildcardNumber($org, $number, $types)
+    {
+        $wildcard = $this->config['wildcardNumber'] ?? false;
+        if ($wildcard && isset($org) && substr($number, -1) == '0' &&
+            (strpos($types, 'WORK') !== false || strpos($types, 'MAIN') !== false)
+            && strpos($types, 'PREF') !== false)  {
+            return [
+                'type'   => 'work',
+                'number' => rtrim($number, '0') . '*',
+            ];
+        }
+
+        return [];
     }
 }
