@@ -2,54 +2,76 @@
 
 namespace Andig\FritzBox;
 
+/**
+ * The class provides the functions to convert vCards into contacts according to
+ * FRITZ!Box XML phonebook format
+ *
+ * @see https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_contactSCPD.pdf#page=19
+ *
+ * @author Andreas Götz
+ * @author Volker Püschel <knuffy@anasco.de>
+ * @license MIT
+**/
+
 use Andig;
 use \SimpleXMLElement;
 
 class Converter
 {
+    const INTERNAL_PREFIX = '**';           // indicates an internal phone numer
+    const PHONE_TYPE = 'other';             // appears as 'sonstige' in German
+
     private $config;
 
     /** @var SimpleXMLElement */
     private $contact;
 
     private $phoneSort = [];
+    private $numberConversion = false;
+    private $vipCategories;
+    private $emailTypes = [];
 
     public function __construct(array $config)
     {
         $this->config = $config['conversions'];
         $this->phoneSort = $this->getPhoneTypesSortOrder();
+        !$this->config['phoneReplaceCharacters'] ?: $this->numberConversion = true;
+        $this->vipCategories = $this->config['vip'] ?? [];
+        $this->emailTypes = $this->config['emailTypes'] ?? [];
     }
 
     /**
-     * Convert Vcard to FritzBox XML
-     * All conversion steps operate on $this->contact
+     * Convert a vCard into a FritzBox XML contact. All conversion steps operate
+     * on $this->contact. If the vCard contains more than nine valid telephone
+     * numbers, the contact will be divided up, since the FRITZ!Box only allows
+     * a maximum of nine telephone numbers per contact. vCards without a phone
+     * number will be ignored
      *
      * @param mixed $card
      * @return SimpleXMLElement[]
      */
     public function convert($card): array
     {
-        $allNumbers  = $this->getPhoneNumbers($card);       // get array of prequalified phone numbers
-        $adresses = $this->getEmailAdresses($card);         // get array of prequalified email adresses
+        $contactNumbers  = $this->getPhoneNumbers($card);   // get array of prequalified phone numbers
+        $adresses = $this->getEmailAdresses($card);     // get array of prequalified email adresses
+        $uid = (string)$card->UID;
 
         $contacts = [];
-        if (count($allNumbers) > 9) {
-            error_log("Contact with >9 phone numbers will be split");
-        } elseif (count($allNumbers) == 0) {
-            error_log("Contact without phone numbers will be skipped");
+        if (count($contactNumbers) > 9) {
+            error_log(sprintf('Contact (UID %s) with >9 phone numbers will be splited', $uid));
+        } elseif (count($contactNumbers) == 0) {
+            error_log(sprintf('Contact (UID %s) without phone numbers will be skipped', $uid));
         }
 
-        foreach (array_chunk($allNumbers, 9) as $numbers) {
+        foreach (array_chunk($contactNumbers, 9) as $numbers) {
             $this->contact = new SimpleXMLElement('<contact />');
-            $this->contact->addChild('carddav_uid', (string)$card->UID);    // reference for image upload
+            $this->contact->addChild('carddav_uid', $uid);  // reference for image upload
 
             $this->addVip($card);
             $this->addPhone($numbers);
 
             // add eMail
-            if (count($adresses)) {
-                $this->addEmail($adresses);
-            }
+            !$adresses ?: $this->addEmail($adresses);
 
             // add Person
             $person = $this->contact->addChild('person');
@@ -69,25 +91,44 @@ class Converter
 
     /**
      * convert a phone number if conversions (phoneReplaceCharacters) are set
+     * SIP or internal number are skiped to avoid unwanted conversions
      *
      * @param string $number
      * @return string $number
      */
-    public function convertPhonenumber($number)
+    public function convertPhoneNumber($number)
     {
-        // check if phone number is a SIP or internal number to avoid unwanted conversions
-        if (filter_var($number, FILTER_VALIDATE_EMAIL) || substr($number, 0, 2) == '**') {
+        if ($this->isSipNumber($number) || $this->isInternalNumber($number)) {
             return $number;
         }
-        if (count($this->config['phoneReplaceCharacters'])) {
-            $number = str_replace("\xc2\xa0", "\x20", $number);
-            $number = strtr($number, $this->config['phoneReplaceCharacters']);
-            $number = trim(preg_replace('/\s+/', ' ', $number));
-        }
+        $number = str_replace("\xc2\xa0", "\x20", $number);
+        $number = strtr($number, $this->config['phoneReplaceCharacters']);
+        $number = trim(preg_replace('/\s+/', ' ', $number));
 
         return $number;
     }
 
+    /**
+     * returns if phone number is a SIP number
+     *
+     * @param string $number
+     * @return bool
+     */
+    private function isSipNumber(string $number)
+    {
+        return !filter_var($number, FILTER_VALIDATE_EMAIL) ? false : true;
+    }
+
+    /**
+     * returns if phone number is an internal number
+     *
+     * @param string $number
+     * @return bool
+     */
+    private function isInternalNumber(string $number)
+    {
+        return substr($number, 0, 2) == self::INTERNAL_PREFIX ? true : false;
+    }
 
     /**
      * Return a simple array depending on the order of phonetype conversions
@@ -98,8 +139,8 @@ class Converter
     private function getPhoneTypesSortOrder(): array
     {
         $seqArr = array_values(array_map('strtolower', $this->config['phoneTypes']));
-        $seqArr[] = 'other';                               // ensures that the default value is included
-        return array_unique($seqArr);                      // deletes duplicates
+        $seqArr[] = self::PHONE_TYPE;   // ensures that the default value is included last
+        return array_unique($seqArr);                       // deletes duplicates
     }
 
     /**
@@ -110,9 +151,7 @@ class Converter
      */
     private function addVip($card)
     {
-        $vipCategories = $this->config['vip'] ?? [];
-
-        if (Andig\filtersMatch($card, $vipCategories)) {
+        if (Andig\filtersMatch($card, $this->vipCategories)) {
             $this->contact->addChild('category', '1');
         }
     }
@@ -160,7 +199,7 @@ class Converter
     }
 
     /**
-     * Return an array of prequalified phone numbers. This is neccesseary to
+     * Returns an array of prequalified phone numbers. This is neccesseary to
      * handle the maximum of nine phone numbers per FRITZ!Box phonebook contacts
      *
      * @param mixed $card
@@ -171,15 +210,16 @@ class Converter
         if (!isset($card->TEL)) {
             return [];
         }
-
         $phoneNumbers = [];
         $phoneTypes = $this->config['phoneTypes'] ?? [];
         foreach ($card->TEL as $key => $number) {
             // format number
-            $number = $this->convertPhonenumber($number);
-            // get type
-            $type = 'other';
-            $telTypes = strtoupper($card->TEL[$key]->parameters['TYPE'] ?? '');
+            if ($this->numberConversion) {
+                $number = $this->convertPhoneNumber($number);
+            }
+            // get types
+            $telTypes = strtoupper($card->TEL[$key]['TYPE'] ?? '');
+            $type = self::PHONE_TYPE;                           // set default
             foreach ($phoneTypes as $phoneType => $value) {
                 if (strpos($telTypes, strtoupper($phoneType)) !== false) {
                     $type = strtolower((string)$value);
@@ -189,25 +229,37 @@ class Converter
             if (strpos($telTypes, 'FAX') !== false) {
                 $type = 'fax_work';
             }
-            $addNumber = [
+            $phoneNumbers[] = [
                 'type'   => $type,
                 'number' => (string)$number,
             ];
-            $phoneNumbers[] = $addNumber;
+        }
+        // sort phone numbers
+        if (count($phoneNumbers) > 1) {
+            $phoneNumbers = $this->sortPhoneNumbers($phoneNumbers);
         }
 
-        // sort phone numbers
-        if (count($phoneNumbers)) {
-            usort($phoneNumbers, function ($a, $b) {
-                $idx1 = array_search($a['type'], $this->phoneSort, true);
-                $idx2 = array_search($b['type'], $this->phoneSort, true);
-                if ($idx1 == $idx2) {
-                    return ($a['number'] > $b['number']) ? 1 : -1;
-                } else {
-                    return ($idx1 > $idx2) ? 1 : -1;
-                }
-            });
-        }
+        return $phoneNumbers;
+    }
+
+    /**
+     * Sorting of the phone numbers depending on the order of the conversion
+     * table
+     *
+     * @param array $phonenumbers
+     * @return array $phonenumbers
+     */
+    private function sortPhoneNumbers(array $phoneNumbers)
+    {
+        usort($phoneNumbers, function ($a, $b) {
+            $idx1 = array_search($a['type'], $this->phoneSort, true);
+            $idx2 = array_search($b['type'], $this->phoneSort, true);
+            if ($idx1 == $idx2) {
+                return ($a['number'] > $b['number']) ? 1 : -1;
+            } else {
+                return ($idx1 > $idx2) ? 1 : -1;
+            }
+        });
 
         return $phoneNumbers;
     }
@@ -224,25 +276,20 @@ class Converter
         if (!isset($card->EMAIL)) {
             return [];
         }
-
         $mailAdresses = [];
-        $emailTypes = $this->config['emailTypes'] ?? [];
-
         foreach ($card->EMAIL as $key => $address) {
-            $addAddress = [
+            $mailAddress = [
                 'id'    => count($mailAdresses),
                 'email' => (string)$address,
             ];
-
-            $mailTypes = strtoupper($card->EMAIL[$key]->parameters['TYPE'] ?? '');
-            foreach ($emailTypes as $emailType => $value) {
-                if (strpos($mailTypes, strtoupper($emailType)) !== false) {
-                    $addAddress['classifier'] = strtolower($value);
+            $vCardMailTypes = strtoupper($card->EMAIL[$key]->parameters['TYPE'] ?? '');
+            foreach ($this->emailTypes as $emailType => $value) {
+                if (strpos($vCardMailTypes, strtoupper($emailType)) !== false) {
+                    $mailAddress['classifier'] = strtolower($value);
                     break;
                 }
             }
-
-            $mailAdresses[] = $addAddress;
+            $mailAdresses[] = $mailAddress;
         }
 
         return $mailAdresses;
@@ -266,7 +313,7 @@ class Converter
             $token_format = '/{([^}]+)}/';
             preg_match_all($token_format, $rule, $tokens);
 
-            if (!count($tokens)) {
+            if (!$tokens) {
                 throw new \Exception("Invalid conversion definition for `$property`");
             }
 
