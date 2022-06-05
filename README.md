@@ -16,6 +16,7 @@ This is a completely revised version of [https://github.com/jens-maus/carddav2fb
 * the contact's UID of the CardDAV server is added to the phone book entry (not visible in the FRITZ! Box GUI)
 * automatically preserves QuickDial and Vanity attributes of phone numbers set in FRITZ!Box Web GUI. Works without config. These data are saved separately in the internal FRITZ!Box memory under `../FRITZ/mediabox/Atrributes.csv` from loss.
 * generates an image with keypad and designated quickdial numbers (2-9), which can be uploaded to designated handhelds (see details below)
+* if `wildcardnumbers` is true a companies main number ending with '0' will be duplicated and ending will be replaced by '*'. A number range of direct dial in numbers will match to this phonebook entry.
 
 Additonal with this version (fork):
 
@@ -137,6 +138,21 @@ You need to activate XSL module
 
 ```console
 extension=xsl
+```
+
+### Wildcard number preconditions
+
+There is no way to assign a special predicate like this to a phone number in a vCard. In order to use this feature, several attributes must come together:
+
+1. the Organization field (ORG)must be filled
+2. the phone number must end with "0".
+3. the phone number must be marked as business ("WORK" or "MAIN")
+4. the phone number must be marked as preferred ("PREF").
+
+```console
+ORG:Bundesnetzagentur
+TEL;TYPE=WORK,PREF:029199550
+TEL;TYPE=WORK:0291 / 9955 - 206
 ```
 
 ## Debugging
