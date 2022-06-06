@@ -19,11 +19,11 @@ class replymail
 
     const EMAIL_SBJCT = 'Newer contact was found in phonebook: ';
     const EMAIL_TEXT = <<<EOD
-    carddav2fb found the attached contact in your Fritz!Box telephone book, but not in your upload data.
+carddav2fb found the attached contact in your Fritz!Box telephone book, but not in your upload data.
 
-    Please check if you would like to keep this information and maybe add it to your contacts on the CardDAV server:
+Please check if you would like to keep this information and maybe add it to your contacts on the CardDAV server:
 
-    EOD;
+EOD;
     CONST VIP_INFO = 'This contact was marked as important.\nSuggestion: assign to a VIP category or group.';
 
     private $mail;
