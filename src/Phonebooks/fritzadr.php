@@ -3,13 +3,13 @@
 namespace blacksenator\FritzAdr;
 
 /**
- * This class provides a functionality to extract fax numbers
- * and provide them in a simple array with 19 or 21 fields
- * - to pass them to FritzAdr compliant dBASE file (fritzadr.dbf).
- * The DB analysis of several FritzAdr.dbf files has surprisingly
- * shown both variants. Ultimately, the 21er works for me.
+ * This class provides a functionality to extract fax numbers and provide them 
+ * in a simple array with 19 or 21 fields to pass them to FritzAdr compliant 
+ * dBASE file (fritzadr.dbf). The DB analysis of several FritzAdr.dbf files has 
+ * surprisingly shown both variants. Ultimately, the 21er works for me.
  *
- * Copyright (c) 2021 Volker Püschel
+ * @author Volker Püschel <knuffy@anasco.de>
+ * @copyright 2023 Volker Püschel
  * @license MIT
  */
 
@@ -21,7 +21,8 @@ class fritzadr
 {
     use ConvertTrait;
     /**
-     * delivers an structured adress array of fax numbers from a designated phone book
+     * delivers an structured adress array of fax numbers from a designated 
+     * phone book
      *
      * @param SimpleXMLElement $xmlPhonebook phonebook in FRITZ!Box format
      * @return array fax numbers, names

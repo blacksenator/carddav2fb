@@ -5,7 +5,8 @@ namespace blacksenator\ReplyMail;
 /**
  * class replymail delivers a simple function based on PHPMailer
  *
- * Copyright (c) 2021 Volker Püschel
+ * @author Volker Püschel <knuffy@anasco.de>
+ * @copyright 2023 Volker Püschel
  * @license MIT
  */
 
