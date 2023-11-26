@@ -5,15 +5,17 @@ namespace Andig\FritzBox;
 use Andig\FritzBox\Api;
 
 /**
- * Copyright (c) 2021 Volker Püschel
+ * @author Volker Püschel <knuffy@anasco.de>
+ * @copyright 2023 Volker Püschel
  * @license MIT
  */
 
 class BackgroundImage
 {
-    const TEXTCOLOR = [38, 142, 223];                   // light blue from FRITZ!Box GUI
+    const TEXTCOLOR = [38, 142, 223];           // light blue from FRITZ!Box GUI
     const LINE_SPACING = 100;
     const FRITZ_FONS = [610, 611, 612, 613, 614, 615];  // up to six handheld phones can be registered
+    CONST UPLD_SUCCESS = 'SUCCEEDED';   // positiv result string after upload
 
     /** @var object */
     private $bgImage;
@@ -29,7 +31,7 @@ class BackgroundImage
         $this->bgImage = $this->getImageAsset(dirname(__DIR__, 2) . '/assets/keypad.jpg');
         putenv('GDFONTPATH=' . realpath('.'));
         $this->setFont(dirname(__DIR__, 2) . '/assets/impact.ttf');
-        $this->setTextcolor(self::TEXTCOLOR);           // light blue from Fritz!Box GUI
+        $this->setTextcolor(self::TEXTCOLOR);   // light blue from Fritz!Box GUI
     }
 
     /**
@@ -81,8 +83,8 @@ class BackgroundImage
     }
 
     /**
-     * creates an image based on a phone keypad with names
-     * assoziated to the quickdial numbers 2 to 9
+     * creates an image based on a phone keypad with names assoziated to the
+     * quickdial numbers 2 to 9
      *
      * @param array $quickdials
      * @return string|bool
@@ -116,10 +118,9 @@ class BackgroundImage
     }
 
     /**
-     * Returns a well-formed body string, which is accepted
-     * by the FRITZ!Box for uploading a background image.
-     * Guzzle's multipart option does not work on this interface.
-     * (the last test carried out was 09/2021)
+     * Returns a well-formed body string, which is accepted by the FRITZ!Box for
+     * uploading a background image. Guzzle's multipart option does not work on 
+     * this interface (the last test carried out was 09/2021). 
      * If this changes, this function can be replaced.
      *
      * @param string $sID
@@ -211,8 +212,7 @@ EOD;
             ];
             $result = $fritz->postFile($formFields, $fileFields);
             */
-            if (strpos($result, 'Das Bild wurde erfolgreich hinzugefügt') ||
-                strpos($result, 'The image was added successfully')) {
+            if (strpos($result, self::UPLD_SUCCESS)) {
                 error_log('Background image upload successful');
             } else {
                 error_log('Background image upload failed');
