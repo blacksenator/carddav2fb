@@ -3,14 +3,14 @@
 namespace blacksenator\IPphones;
 
 /**
- * This class provides generic functionalities to convert
- * FRITZ!Box phonebook into different IP phone XML formats
- * based on XSL Transformation (XSLT)
+ * This class provides generic functionalities to convert FRITZ!Box phonebook
+ * into different IP phone XML formats based on XSL Transformation (XSLT)
  *
  * You need to enable libxslt library!
  * php.ini: extension=php_xsl.dll
  *
- * @copyright(c) 2021 Volker Püschel
+ * @author Volker Püschel <knuffy@anasco.de>
+ * @copyright 2023 Volker Püschel
  * @license MIT
  */
 
