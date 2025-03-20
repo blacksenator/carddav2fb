@@ -10,7 +10,7 @@ namespace blacksenator\IPphones;
  * php.ini: extension=php_xsl.dll
  *
  * @author Volker Püschel <knuffy@anasco.de>
- * @copyright 2023 Volker Püschel
+ * @copyright 2025 Volker Püschel
  * @license MIT
  */
 

@@ -9,7 +9,7 @@ namespace blacksenator\FritzAdr;
  * surprisingly shown both variants. Ultimately, the 21er works for me.
  *
  * @author Volker Püschel <knuffy@anasco.de>
- * @copyright 2023 Volker Püschel
+ * @copyright 2025 Volker Püschel
  * @license MIT
  */
 
